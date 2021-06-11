@@ -27,6 +27,6 @@ func TestInsertStr(t *testing.T) {
 	b := InsertStr(strings.Split(a, ""), "v", 1)
 	r := reflect.DeepEqual(b, strings.Split("yves", ""))
 	if r != true {
-		t.Errorf("InsertStr() = %s; want 'yves'", b)
+		t.Errorf("InsertStr() = %s; want '[y v e s]'", b)
 	}
 }
