@@ -2,6 +2,8 @@ package gl
 
 import (
         "testing"
+	"strings"
+	"reflect"
 )
 
 func TestStatPathFile(t *testing.T) {
@@ -20,3 +22,11 @@ func TestStatPathDir(t *testing.T) {
 	}
 }
 
+func TestInsertStr(t *testing.T) {
+	a := "yes"
+	b := InsertStr(strings.Split(a, ""), "v", 1)
+	r := reflect.DeepEqual(b, strings.Split("yves", ""))
+	if r != true {
+		t.Errorf("InsertStr() = %s; want 'yves'", b)
+	}
+}
