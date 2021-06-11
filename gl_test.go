@@ -30,3 +30,15 @@ func TestInsertStr(t *testing.T) {
 		t.Errorf("InsertStr() = %s; want '[y v e s]'", b)
 	}
 }
+
+func TestStringToFile(t *testing.T) {
+	e := StringToFile("/dev/null", "foo")
+	if e != nil {
+		t.Errorf("StringToFile() = %s; want 'nil'", e.Error())
+	}
+	f := StringToFile("/dev/nil", "foo")
+	if f == nil {
+		t.Errorf("StringToFile() = %s; want 'error'", f.Error())
+	}
+}
+
