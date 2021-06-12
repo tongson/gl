@@ -1,8 +1,8 @@
 package gl
 
 import (
-	"reflect"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 )
