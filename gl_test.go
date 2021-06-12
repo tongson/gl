@@ -46,7 +46,7 @@ func TestStringToFile(t *testing.T) {
 func TestFileRead(t *testing.T) {
 	s := FileRead("/etc/passwd")
 	if s == "" {
-		t.Errorf("FileRead() = %s; want 'strings'", s)
+		t.Error("FileRead() = ''; want 'strings'")
 	}
 }
 
