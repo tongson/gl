@@ -2,6 +2,7 @@ package gl
 
 import (
 	"reflect"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -46,5 +47,14 @@ func TestFileRead(t *testing.T) {
 	s := FileRead("/etc/passwd")
 	if s == "" {
 		t.Errorf("FileRead() = %s; want 'strings'", s)
+	}
+}
+
+func TestPathWalk(t *testing.T) {
+	var fs strings.Builder
+	fnwalk := PathWalker(&fs)
+	filepath.Walk("/etc/sysctl.d", fnwalk)
+	if fs.String() == "" {
+		t.Error("PathWalker() = ''; want 'strings'")
 	}
 }
