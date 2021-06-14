@@ -48,6 +48,10 @@ func TestFileRead(t *testing.T) {
 	if s == "" {
 		t.Error("FileRead() = ''; want 'strings'")
 	}
+	x := FileRead("/etc/sdfsdf")
+	if x != "" {
+		t.Error("want ''")
+	}
 }
 
 func TestPathWalk(t *testing.T) {
