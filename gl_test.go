@@ -57,7 +57,7 @@ func TestFileRead(t *testing.T) {
 func TestPathWalk(t *testing.T) {
 	var fs strings.Builder
 	fnwalk := PathWalker(&fs)
-	filepath.Walk("/etc/sysctl.d", fnwalk)
+	filepath.Walk("/usr/bin", fnwalk)
 	if fs.String() == "" {
 		t.Error("PathWalker() = ''; want 'strings'")
 	}
