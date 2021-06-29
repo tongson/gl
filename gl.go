@@ -183,7 +183,10 @@ func StringToFile(path string, s string) error {
 		return err
 	}
 	defer func() {
-		_ = fo.Close()
+		cerr = fo.Close()
+		if err == nil {
+			err = cerr
+		}
 	}()
 	_, err = io.Copy(fo, strings.NewReader(s))
 	if err != nil {
