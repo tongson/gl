@@ -170,9 +170,6 @@ func InsertStr(a []string, b string, i int) []string {
 // Used to "prettify" command line output.
 // Returns new string.
 func PipeStr(prefix string, str string, char string) string {
-	if char == "" {
-		char = ">"
-	}
 	replacement := fmt.Sprintf("\n %s %s", prefix, char)
 	str = strings.Replace(str, "\n", replacement, -1)
 	return fmt.Sprintf(" %s %s\n %s %s %s", prefix, char, prefix, char, str)
@@ -208,7 +205,7 @@ func RecoverPanic() {
 
 func Assert(e error, s string) {
 	if e != nil {
-		panic(panicT{msg: PipeStr(s, fmt.Sprintf("%s\n", e.Error())), code: 255})
+		panic(panicT{msg: PipeStr(s, fmt.Sprintf("%s\n", e.Error()), ">"), code: 255})
 	}
 }
 
