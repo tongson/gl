@@ -79,6 +79,7 @@ func (a RunArgs) Run() (bool, string, string, string, string) {
 			errorStr = err.Error()
 		}
 	}
+	dw.Close()
 	dbg, _ := io.ReadAll(dr)
 	return r, stdout.String(), stderr.String(), errorStr, string(dbg)
 }
