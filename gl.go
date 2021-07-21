@@ -30,7 +30,7 @@ type panicT struct {
 // Second value is the standard output of the command.
 // Third value is the standard error of the command.
 // Fourth value is error string from Run.
-func (a RunArgs) Run() (bool, string, string, string) {
+func (a RunArgs) Run() (bool, string, string, string, string) {
 	var r bool = true
 	/* #nosec G204 */
 	cmd := exec.Command(a.Exe, a.Args...)
@@ -43,11 +43,18 @@ func (a RunArgs) Run() (bool, string, string, string) {
 	if a.Stdin != nil || len(a.Stdin) > 0 {
 		cmd.Stdin = bytes.NewBuffer(a.Stdin)
 	}
+	dr, dw, _ := os.Pipe()
+	defer dr.Close()
+	defer dw.Close()
+	debugfd := []*os.File{
+		967: dw,
+	}
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	var errorStr string
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
+	cmd.ExtraFiles = debugfd
 	var err error
 	if a.Timeout > 0 {
 		err = cmd.Start()
@@ -72,7 +79,8 @@ func (a RunArgs) Run() (bool, string, string, string) {
 			errorStr = err.Error()
 		}
 	}
-	return r, stdout.String(), stderr.String(), errorStr
+	dbg, _ := io.ReadAll(dr)
+	return r, stdout.String(), stderr.String(), errorStr, string(dbg)
 }
 
 // Returns a function for simple directory or file check.
