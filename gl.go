@@ -177,7 +177,7 @@ func InsertStr(a []string, b string, i int) []string {
 // Prefix string `s` with pipes "|".
 // Used to "prettify" command line output.
 // Returns new string.
-func PipeStr(prefix string, str string, char string) string {
+func PipeStr(prefix string, char string, str string) string {
 	replacement := fmt.Sprintf("\n %s %s ", prefix, char)
 	str = strings.Replace(str, "\n", replacement, -1)
 	return fmt.Sprintf(" %s %s\n %s %s %s", prefix, char, prefix, char, str)
