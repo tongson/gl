@@ -54,6 +54,26 @@ func TestFileRead(t *testing.T) {
 	}
 }
 
+func TestFileLines(t *testing.T) {
+	s := FileLines("gl.go")
+	if s == nil {
+		t.Error("FileLines() = nil; want '[]string'")
+	}
+	x := FileLines("gl.go")
+	if len(x) < 0 {
+		t.Error("FileLines() len = 0; want > 0")
+	}
+	if x[0] != "package gl" {
+		t.Error("FileLines(gl.go) did not match")
+	}
+	if x[1] != "" {
+		t.Error("FileLines(gl.go) did not match")
+	}
+	if x[2] != "import (" {
+		t.Error("FileLines(gl.go) did not match")
+	}
+}
+
 func TestPathWalk(t *testing.T) {
 	var fs strings.Builder
 	fnwalk := PathWalker(&fs)
