@@ -74,6 +74,13 @@ func TestFileLines(t *testing.T) {
 	}
 }
 
+func TestFileGlob(t *testing.T) {
+	x, _ := FileGlob("./*")
+	if x[0] != ".git" {
+		t.Error("FileGlob(./*) did not match")
+	}
+}
+
 func TestPathWalk(t *testing.T) {
 	var fs strings.Builder
 	fnwalk := PathWalker(&fs)
