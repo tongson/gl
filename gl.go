@@ -8,8 +8,10 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
+	"unicode"
 )
 
 type RunArgs struct {
@@ -183,6 +185,18 @@ func FileLines(path string) []string {
 	} else {
 		return nil
 	}
+}
+
+func FileGlob(path string) ([]string, error) {
+	p := ""
+	for _, r := range path {
+		if unicode.IsLetter(r) {
+			p += fmt.Sprintf("[%c%c]", unicode.ToLower(r), unicode.ToUpper(r))
+		} else {
+			p += string(r)
+		}
+	}
+	return filepath.Glob(p)
 }
 
 // Insert string argument #2 into index `i` of first argument `a`.
