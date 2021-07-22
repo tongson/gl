@@ -1,6 +1,7 @@
 package gl
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -155,6 +156,32 @@ func FileRead(path string) string {
 		return string(str)
 	} else {
 		return ""
+	}
+}
+
+func FileLines(path string) []string {
+	isFile := StatPath("file")
+	/* #nosec G304 */
+	if isFile(path) {
+		file, err := os.Open(path)
+		if err != nil {
+			log.Panic(err)
+		}
+		scanner := bufio.NewScanner(file)
+		scanner.Split(bufio.ScanLines)
+		var text []string
+		for scanner.Scan() {
+			text = append(text, scanner.Text())
+		}
+		defer func() {
+			err := file.Close()
+			if err != nil {
+				log.Panic(err)
+			}
+		}()
+		return text
+	} else {
+		return nil
 	}
 }
 
