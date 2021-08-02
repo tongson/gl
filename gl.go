@@ -78,6 +78,23 @@ func (a RunArgs) Run() (bool, string, string, string) {
 	return r, stdout.String(), stderr.String(), errorStr
 }
 
+func IsFile(p string) bool {
+	info, err := os.Stat(p)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
+func IsDir(p string) bool {
+	if fi, err := os.Stat(p); err == nil {
+		if fi.IsDir() {
+			return true
+		}
+	}
+	return false
+}
+
 // Returns a function for simple directory or file check.
 // StatPath("directory") for directories.
 // StatPath() or StatPath("whatever") for files.
