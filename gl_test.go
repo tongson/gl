@@ -7,6 +7,20 @@ import (
 	"testing"
 )
 
+func TestIsFile(t *testing.T) {
+	b := IsFile("/etc/passwd")
+	if b != true {
+		t.Errorf("IsFile(\"\") = %t; want `true`", b)
+	}
+}
+
+func TestIsDir(t *testing.T) {
+	b := IsDir("/etc")
+	if b != true {
+		t.Errorf("IsDir(\"directory\") = %t; want `true`", b)
+	}
+}
+
 func TestStatPathFile(t *testing.T) {
 	is_file := StatPath("")
 	b := is_file("/etc/passwd")
