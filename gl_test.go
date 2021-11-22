@@ -98,7 +98,7 @@ func TestFileGlob(t *testing.T) {
 func TestPathWalk(t *testing.T) {
 	var fs strings.Builder
 	fnwalk := PathWalker(&fs)
-	filepath.Walk("/usr/bin", fnwalk)
+	filepath.Walk("/bin", fnwalk)
 	if fs.String() == "" {
 		t.Error("PathWalker() = ''; want 'strings'")
 	}
