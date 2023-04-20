@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"strings"
 	"time"
@@ -53,6 +54,14 @@ func (a RunArgs) Run() (bool, string, string, string) {
 	cmd.Stderr = &stderr
 	var err error
 	if a.Timeout > 0 {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		go func() {
+			for sig := range c {
+				r = false
+				errorStr = sig.String()
+			}
+		}()
 		err = cmd.Start()
 		if err != nil {
 			r = false
@@ -62,6 +71,7 @@ func (a RunArgs) Run() (bool, string, string, string) {
 				cmd.Process.Kill()
 			})
 			err = cmd.Wait()
+			signal.Stop(c)
 			if err != nil {
 				r = false
 				errorStr = err.Error()
@@ -69,7 +79,16 @@ func (a RunArgs) Run() (bool, string, string, string) {
 			timer.Stop()
 		}
 	} else {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		go func() {
+			for sig := range c {
+				r = false
+				errorStr = sig.String()
+			}
+		}()
 		err = cmd.Run()
+		signal.Stop(c)
 		if err != nil {
 			r = false
 			errorStr = err.Error()
