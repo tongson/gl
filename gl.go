@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
 	"os/exec"
@@ -68,7 +69,11 @@ func (a RunArgs) Run() (bool, string, string, string) {
 			errorStr = err.Error()
 		} else {
 			timer := time.AfterFunc(time.Duration(a.Timeout)*time.Second, func() {
-				cmd.Process.Kill()
+				err = cmd.Process.Kill()
+				if err != nil {
+					r = false
+					errorStr = err.Error()
+				}
 			})
 			err = cmd.Wait()
 			signal.Stop(c)
@@ -142,29 +147,27 @@ func StatPath(f string) func(string) bool {
 
 // Returns a function for walking a path for files.
 // Files are read and then contents are written to a strings.Builder pointer.
-func PathWalker(sh *strings.Builder) func(string, os.FileInfo, error) error {
+func PathWalker(sh *strings.Builder) func(string, fs.DirEntry, error) error {
 	isFile := StatPath("file")
-	return func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
+	return func(path string, d fs.DirEntry, err error) error {
+		if d.IsDir() {
 			return nil
 		}
 		/* #nosec G304 */
 		if isFile(path) {
 			file, err := os.Open(path)
 			if err != nil {
-				log.Panic(err)
+				return err
 			}
-			defer func() {
-				err := file.Close()
-				if err != nil {
-					log.Panic(err)
-				}
-			}()
 			str, err := io.ReadAll(file)
 			if err != nil {
-				log.Panic(err)
+				return err
 			}
 			sh.WriteString(string(str)) // length of string and nil err ignored
+			err = file.Close()
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	}

@@ -97,8 +97,16 @@ func TestFileGlob(t *testing.T) {
 
 func TestPathWalk(t *testing.T) {
 	var fs strings.Builder
+	var err error
 	fnwalk := PathWalker(&fs)
-	filepath.Walk("/usr/bin", fnwalk)
+	err = filepath.WalkDir("/etc/environment.d", fnwalk)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = filepath.WalkDir("/etc", fnwalk)
+	if err == nil {
+		t.Error("Expected an error here.")
+	}
 	if fs.String() == "" {
 		t.Error("PathWalker() = ''; want 'strings'")
 	}
