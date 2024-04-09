@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -175,54 +174,53 @@ func PathWalker(sh *strings.Builder) func(string, fs.DirEntry, error) error {
 
 // Reads a file `path` then returns the contents as a string.
 // Always returns a string value.
-// An empty string "" is returned for nonexistent or unreadable files.
+// An empty string "" is returned for errors or nonexistent/unreadable files.
 func FileRead(path string) string {
 	isFile := StatPath("file")
 	/* #nosec G304 */
 	if isFile(path) {
-		file, err := os.Open(path)
-		if err != nil {
-			log.Panic(err)
+		var file *os.File
+		var str []byte
+		defer file.Close()
+		file, oerr := os.Open(path)
+		if oerr != nil {
+			return ""
 		}
-		defer func() {
-			err := file.Close()
-			if err != nil {
-				log.Panic(err)
-			}
-		}()
-		str, err := io.ReadAll(file)
-		if err != nil {
-			log.Panic(err)
+		str, rerr := io.ReadAll(file)
+		if rerr != nil {
+			return ""
 		}
-		return string(str)
+                _ = file.Close()
+		if len(str) > 0 {
+			return string(str)
+		} else {
+			return ""
+                }
 	} else {
 		return ""
 	}
 }
 
 func FileLines(path string) []string {
+	var text [] string
 	isFile := StatPath("file")
 	/* #nosec G304 */
 	if isFile(path) {
+		var file *os.File
+		defer file.Close()
 		file, err := os.Open(path)
 		if err != nil {
-			log.Panic(err)
+			return text
 		}
 		scanner := bufio.NewScanner(file)
 		scanner.Split(bufio.ScanLines)
-		var text []string
 		for scanner.Scan() {
 			text = append(text, scanner.Text())
 		}
-		defer func() {
-			err := file.Close()
-			if err != nil {
-				log.Panic(err)
-			}
-		}()
+		_ = file.Close()
 		return text
 	} else {
-		return nil
+		return text
 	}
 }
 
