@@ -156,8 +156,8 @@ func PathWalker(sh *strings.Builder) func(string, fs.DirEntry, error) error {
 		if isFile(path) {
 			var file *os.File
 			var str []byte
-			defer file.Close()
 			file, oerr := os.Open(path)
+			defer file.Close()
 			if err != nil {
 				return oerr
 			}
@@ -181,8 +181,8 @@ func FileRead(path string) string {
 	if isFile(path) {
 		var file *os.File
 		var str []byte
-		defer file.Close()
 		file, oerr := os.Open(path)
+		defer file.Close()
 		if oerr != nil {
 			return ""
 		}
@@ -207,8 +207,8 @@ func FileLines(path string) []string {
 	/* #nosec G304 */
 	if isFile(path) {
 		var file *os.File
-		defer file.Close()
 		file, err := os.Open(path)
+		defer file.Close()
 		if err != nil {
 			return text
 		}
@@ -257,10 +257,10 @@ func PipeStr(prefix string, char string, str string) string {
 // It returns any error encountered, nil otherwise.
 func StringToFile(path string, s string) error {
 	fo, err := os.Create(path)
+	defer fo.Close()
 	if err != nil {
 		return err
 	}
-	defer fo.Close()
 	_, err = io.Copy(fo, strings.NewReader(s))
 	if err != nil {
 		return err
