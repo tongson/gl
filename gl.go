@@ -260,17 +260,12 @@ func StringToFile(path string, s string) error {
 	if err != nil {
 		return err
 	}
-	defer func() {
-		cerr := fo.Close()
-		if err == nil {
-			err = cerr
-		}
-	}()
+	defer fo.Close()
 	_, err = io.Copy(fo, strings.NewReader(s))
 	if err != nil {
 		return err
 	}
-	return nil
+	return fo.Close()
 }
 
 func RecoverPanic() {
