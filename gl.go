@@ -154,19 +154,19 @@ func PathWalker(sh *strings.Builder) func(string, fs.DirEntry, error) error {
 		}
 		/* #nosec G304 */
 		if isFile(path) {
-			file, err := os.Open(path)
+			var file *os.File
+			var str []byte
+			defer file.Close()
+			file, oerr := os.Open(path)
 			if err != nil {
-				return err
+				return oerr
 			}
-			str, err := io.ReadAll(file)
+			str, rerr := io.ReadAll(file)
 			if err != nil {
-				return err
+				return rerr
 			}
 			sh.WriteString(string(str)) // length of string and nil err ignored
-			err = file.Close()
-			if err != nil {
-				return err
-			}
+			return file.Close()
 		}
 		return nil
 	}
