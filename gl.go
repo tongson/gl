@@ -41,7 +41,7 @@ type panicT struct {
 // Third value is the standard error of the command.
 // Fourth value is error string from Run.
 func (a RunArgs) Run() (bool, RunOut) {
-	var r bool = true
+	var r bool = false
 	/* #nosec G204 */
 	cmd := exec.Command(a.Exe, a.Args...)
 	if a.Dir != "" {
@@ -78,6 +78,8 @@ func (a RunArgs) Run() (bool, RunOut) {
 				if err != nil {
 					r = false
 					errorStr = err.Error()
+				} else {
+					r = true
 				}
 			})
 			err = cmd.Wait()
@@ -85,6 +87,8 @@ func (a RunArgs) Run() (bool, RunOut) {
 			if err != nil {
 				r = false
 				errorStr = err.Error()
+			} else {
+				r = true
 			}
 			timer.Stop()
 		}
@@ -102,6 +106,8 @@ func (a RunArgs) Run() (bool, RunOut) {
 		if err != nil {
 			r = false
 			errorStr = err.Error()
+		} else {
+			r = true
 		}
 	}
 	return r, RunOut{Stdout: stdout.String(), Stderr: stderr.String(), Err: errorStr}
