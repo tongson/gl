@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestRunSimple1(t *testing.T) {
+func TestRunSimpleOk(t *testing.T) {
 	var exe RunArgs
 	exe = RunArgs{Exe: "true"}
 	if ret, _ := exe.Run(); !ret {
@@ -15,7 +15,7 @@ func TestRunSimple1(t *testing.T) {
 	}
 }
 
-func TestRunSimple2(t *testing.T) {
+func TestRunSimpleFail(t *testing.T) {
 	var exe RunArgs
 	exe = RunArgs{Exe: "false"}
 	if ret, _ := exe.Run(); ret {
