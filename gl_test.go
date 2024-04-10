@@ -7,6 +7,30 @@ import (
 	"testing"
 )
 
+func TestRun(t *testing.T) {
+	env := []string{"FOO=BAR"}
+	var exe RunArgs
+	input := "foo\n\nbar"
+	args := []string{
+		"-v",
+	}
+	exe = RunArgs{Exe: "cat", Args: args, Env: env, Stdin: []byte(input)}
+	ret, stdout, stderr, goerr := exe.Run()
+	if ret != true {
+		t.Errorf("Run = %t; want `true`", ret)
+	}
+	if stdout != "foo\n\nbar" {
+		t.Errorf("Run = %s; want ''", stdout)
+	}
+	if stderr != "" {
+		t.Errorf("Run = %s; want ''", stderr)
+	}
+	if goerr != "" {
+		t.Errorf("Run = %s; want ''", goerr)
+	}
+
+}
+
 func TestIsFile(t *testing.T) {
 	b := IsFile("/etc/passwd")
 	if b != true {
