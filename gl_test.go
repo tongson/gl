@@ -7,6 +7,22 @@ import (
 	"testing"
 )
 
+func TestRunSimple1(t *testing.T) {
+	var exe RunArgs
+	exe = RunArgs{Exe: "true"}
+	if ret, _ := exe.Run(); !ret {
+		t.Errorf("Run() wants `true`")
+	}
+}
+
+func TestRunSimple2(t *testing.T) {
+	var exe RunArgs
+	exe = RunArgs{Exe: "false"}
+	if ret, _ := exe.Run(); ret {
+		t.Errorf("Run() wants `false`")
+	}
+}
+
 func TestRunStdin(t *testing.T) {
 	var exe RunArgs
 	input := "foo\n\nbar"
