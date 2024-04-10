@@ -190,19 +190,19 @@ func FileRead(path string) string {
 		if rerr != nil {
 			return ""
 		}
-                _ = file.Close()
+		_ = file.Close()
 		if len(str) > 0 {
 			return string(str)
 		} else {
 			return ""
-                }
+		}
 	} else {
 		return ""
 	}
 }
 
 func FileLines(path string) []string {
-	var text [] string
+	var text []string
 	isFile := StatPath("file")
 	/* #nosec G304 */
 	if isFile(path) {
