@@ -24,6 +24,12 @@ type RunArgs struct {
 	Timeout int
 }
 
+type RunOut struct {
+	Stdout string
+	Stderr string
+	Err    string
+}
+
 type panicT struct {
 	msg  string
 	code int
@@ -34,7 +40,7 @@ type panicT struct {
 // Second value is the standard output of the command.
 // Third value is the standard error of the command.
 // Fourth value is error string from Run.
-func (a RunArgs) Run() (bool, string, string, string) {
+func (a RunArgs) Run() (bool, RunOut) {
 	var r bool = true
 	/* #nosec G204 */
 	cmd := exec.Command(a.Exe, a.Args...)
@@ -98,7 +104,7 @@ func (a RunArgs) Run() (bool, string, string, string) {
 			errorStr = err.Error()
 		}
 	}
-	return r, stdout.String(), stderr.String(), errorStr
+	return r, RunOut{Stdout: stdout.String(), Stderr: stderr.String(), Err: errorStr}
 }
 
 func IsFile(p string) bool {
