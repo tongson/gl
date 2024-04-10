@@ -7,20 +7,19 @@ import (
 	"testing"
 )
 
-func TestRun(t *testing.T) {
-	env := []string{"FOO=BAR"}
+func TestRunStdin(t *testing.T) {
 	var exe RunArgs
 	input := "foo\n\nbar"
 	args := []string{
 		"-v",
 	}
-	exe = RunArgs{Exe: "cat", Args: args, Env: env, Stdin: []byte(input)}
+	exe = RunArgs{Exe: "cat", Args: args, Stdin: []byte(input)}
 	ret, stdout, stderr, goerr := exe.Run()
 	if ret != true {
 		t.Errorf("Run = %t; want `true`", ret)
 	}
 	if stdout != "foo\n\nbar" {
-		t.Errorf("Run = %s; want ''", stdout)
+		t.Errorf("Run = %s; want 'foo\n\nbar'", stdout)
 	}
 	if stderr != "" {
 		t.Errorf("Run = %s; want ''", stderr)
@@ -28,7 +27,28 @@ func TestRun(t *testing.T) {
 	if goerr != "" {
 		t.Errorf("Run = %s; want ''", goerr)
 	}
+}
 
+func TestRunEnv(t *testing.T) {
+	env := []string{"FOO=BAR"}
+	var exe RunArgs
+	args := []string{
+		"BEGIN{print ENVIRON[\"FOO\"]}",
+	}
+	exe = RunArgs{Exe: "awk", Args: args, Env: env}
+	ret, stdout, stderr, goerr := exe.Run()
+	if ret != true {
+		t.Errorf("Run = %t; want `true`", ret)
+	}
+	if stdout != "BAR\n" {
+		t.Errorf("Run = %s; want 'BAR\n'", stdout)
+	}
+	if stderr != "" {
+		t.Errorf("Run = %s; want ''", stderr)
+	}
+	if goerr != "" {
+		t.Errorf("Run = %s; want ''", goerr)
+	}
 }
 
 func TestIsFile(t *testing.T) {
