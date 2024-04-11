@@ -7,64 +7,64 @@ import (
 	"testing"
 )
 
-func TestRunSimpleOk(t *testing.T) {
-	var exe RunArgs
-	exe = RunArgs{Exe: "true"}
-	if ret, _ := exe.Run(); !ret {
-		t.Errorf("Run() wants `true`")
-	}
-}
-
-func TestRunSimpleFail(t *testing.T) {
-	var exe RunArgs
-	exe = RunArgs{Exe: "false"}
-	if ret, _ := exe.Run(); ret {
-		t.Errorf("Run() wants `false`")
-	}
-}
-
-func TestRunStdin(t *testing.T) {
-	var exe RunArgs
-	input := "foo\n\nbar"
-	args := []string{
-		"-v",
-	}
-	exe = RunArgs{Exe: "cat", Args: args, Stdin: []byte(input)}
-	ret, out := exe.Run()
-	if ret != true {
-		t.Errorf("Run = %t; want `true`", ret)
-	}
-	if out.Stdout != "foo\n\nbar" {
-		t.Errorf("Run = %s; want 'foo\n\nbar'", out.Stdout)
-	}
-	if out.Stderr != "" {
-		t.Errorf("Run = %s; want ''", out.Stderr)
-	}
-	if out.Error != "" {
-		t.Errorf("Run = %s; want ''", out.Error)
-	}
-}
-
-func TestRunEnv(t *testing.T) {
-	env := []string{"FOO=BAR"}
-	var exe RunArgs
-	args := []string{
-		"BEGIN{print ENVIRON[\"FOO\"]}",
-	}
-	exe = RunArgs{Exe: "awk", Args: args, Env: env}
-	ret, out := exe.Run()
-	if ret != true {
-		t.Errorf("Run = %t; want `true`", ret)
-	}
-	if out.Stdout != "BAR\n" {
-		t.Errorf("Run = %s; want 'BAR\n'", out.Stdout)
-	}
-	if out.Stderr != "" {
-		t.Errorf("Run = %s; want ''", out.Stderr)
-	}
-	if out.Error != "" {
-		t.Errorf("Run = %s; want ''", out.Error)
-	}
+func TestRun(T *testing.T) {
+	T.Parallel()
+	T.Run("gl.Run SimpleOk", func(t *testing.T) {
+		var exe RunArgs
+		exe = RunArgs{Exe: "true"}
+		if ret, _ := exe.Run(); !ret {
+			t.Errorf("Run() wants `true`")
+		}
+	})
+	T.Run("gl.Run SimpleFail", func(t *testing.T) {
+		var exe RunArgs
+		exe = RunArgs{Exe: "false"}
+		if ret, _ := exe.Run(); ret {
+			t.Errorf("Run() wants `false`")
+		}
+	})
+	T.Run("gl.Run Stdin", func(t *testing.T) {
+		var exe RunArgs
+		input := "foo\n\nbar"
+		args := []string{
+			"-v",
+		}
+		exe = RunArgs{Exe: "cat", Args: args, Stdin: []byte(input)}
+		ret, out := exe.Run()
+		if ret != true {
+			t.Errorf("Run = %t; want `true`", ret)
+		}
+		if out.Stdout != "foo\n\nbar" {
+			t.Errorf("Run = %s; want 'foo\n\nbar'", out.Stdout)
+		}
+		if out.Stderr != "" {
+			t.Errorf("Run = %s; want ''", out.Stderr)
+		}
+		if out.Error != "" {
+			t.Errorf("Run = %s; want ''", out.Error)
+		}
+	})
+	T.Run("gl.Run Env", func(t *testing.T) {
+		env := []string{"FOO=BAR"}
+		var exe RunArgs
+		args := []string{
+			"BEGIN{print ENVIRON[\"FOO\"]}",
+		}
+		exe = RunArgs{Exe: "awk", Args: args, Env: env}
+		ret, out := exe.Run()
+		if ret != true {
+			t.Errorf("Run = %t; want `true`", ret)
+		}
+		if out.Stdout != "BAR\n" {
+			t.Errorf("Run = %s; want 'BAR\n'", out.Stdout)
+		}
+		if out.Stderr != "" {
+			t.Errorf("Run = %s; want ''", out.Stderr)
+		}
+		if out.Error != "" {
+			t.Errorf("Run = %s; want ''", out.Error)
+		}
+	})
 }
 
 func TestIsFile(t *testing.T) {
