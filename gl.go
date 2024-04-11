@@ -27,7 +27,7 @@ type RunArgs struct {
 type RunOut struct {
 	Stdout string
 	Stderr string
-	Err    string
+	Error  string
 }
 
 type panicT struct {
@@ -110,7 +110,7 @@ func (a RunArgs) Run() (bool, RunOut) {
 			r = true
 		}
 	}
-	return r, RunOut{Stdout: stdout.String(), Stderr: stderr.String(), Err: errorStr}
+	return r, RunOut{Stdout: stdout.String(), Stderr: stderr.String(), Error: errorStr}
 }
 
 func IsFile(p string) bool {

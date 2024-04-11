@@ -40,8 +40,8 @@ func TestRunStdin(t *testing.T) {
 	if out.Stderr != "" {
 		t.Errorf("Run = %s; want ''", out.Stderr)
 	}
-	if out.Err != "" {
-		t.Errorf("Run = %s; want ''", out.Err)
+	if out.Error != "" {
+		t.Errorf("Run = %s; want ''", out.Error)
 	}
 }
 
@@ -62,8 +62,8 @@ func TestRunEnv(t *testing.T) {
 	if out.Stderr != "" {
 		t.Errorf("Run = %s; want ''", out.Stderr)
 	}
-	if out.Err != "" {
-		t.Errorf("Run = %s; want ''", out.Err)
+	if out.Error != "" {
+		t.Errorf("Run = %s; want ''", out.Error)
 	}
 }
 
