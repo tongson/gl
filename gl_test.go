@@ -13,14 +13,14 @@ func TestRun(T *testing.T) {
 		var exe RunArgs
 		exe = RunArgs{Exe: "true"}
 		if ret, _ := exe.Run(); !ret {
-			t.Errorf("Run() wants `true`")
+			t.Error("Run() wants `true`")
 		}
 	})
 	T.Run("gl.Run SimpleFail", func(t *testing.T) {
 		var exe RunArgs
 		exe = RunArgs{Exe: "false"}
 		if ret, _ := exe.Run(); ret {
-			t.Errorf("Run() wants `false`")
+			t.Error("Run() wants `false`")
 		}
 	})
 	T.Run("gl.Run Stdin", func(t *testing.T) {
