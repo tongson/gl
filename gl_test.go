@@ -23,6 +23,29 @@ func TestRun(T *testing.T) {
 			t.Error("Run() wants `false`")
 		}
 	})
+	T.Run("gl.Run Dir", func(t *testing.T) {
+		exe := RunArgs{Exe: "ls", Dir: "/etc"}
+		ret, out := exe.Run()
+		if !ret {
+			t.Error("Run() wants `true`")
+		}
+		if !strings.Contains(out.Stdout, "passwd") {
+			t.Error("Run() output must contain string")
+		}
+	})
+	T.Run("gl.Run Args", func(t *testing.T) {
+		args := []string {
+			"/etc",
+		}
+		exe := RunArgs{Exe: "ls", Args: args}
+		ret, out := exe.Run()
+	        if !ret {
+			t.Error("Run() wants `true`")
+		}
+		if !strings.Contains(out.Stdout, "passwd") {
+			t.Error("Run() output must contain string")
+		}
+	})
 	T.Run("gl.Run Stdin", func(t *testing.T) {
 		var exe RunArgs
 		input := "foo\n\nbar"
