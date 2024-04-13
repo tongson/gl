@@ -279,29 +279,3 @@ func StringToFile(path string, s string) error {
 	}
 	return fo.Close()
 }
-
-func RecoverPanic() {
-	if rec := recover(); rec != nil {
-		err := rec.(panicT)
-		fmt.Fprintln(os.Stderr, err.msg)
-		os.Exit(err.code)
-	}
-}
-
-func Assert(e error, s string) {
-	if e != nil {
-		panic(panicT{msg: PipeStr(s, fmt.Sprintf("%s\n", e.Error()), ">"), code: 255})
-	}
-}
-
-func Bug(s string) {
-	panic(panicT{msg: fmt.Sprintf("BUG: %s", s), code: 255})
-}
-
-func Panic(s string) {
-	panic(panicT{msg: fmt.Sprintf("FATAL: %s", s), code: 1})
-}
-
-func Panicf(f string, a ...interface{}) {
-	panic(panicT{msg: fmt.Sprintf("FATAL: "+f, a...), code: 1})
-}
