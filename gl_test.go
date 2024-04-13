@@ -132,6 +132,10 @@ func TestIsDir(t *testing.T) {
 	if b != true {
 		t.Errorf("IsDir(\"directory\") = %t; want `true`", b)
 	}
+	c := IsDir("/etc/passwd")
+	if c != false {
+		t.Errorf("IsDir(\"directory\") = %t; want `false`", b)
+	}
 }
 
 func TestStatPath(T *testing.T){
