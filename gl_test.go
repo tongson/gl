@@ -185,6 +185,10 @@ func TestFileRead(t *testing.T) {
 	if x != "" {
 		t.Error("want ''")
 	}
+	z := FileRead("/etc/shadow")
+	if z != "" {
+		t.Error("want ''")
+	}
 }
 
 func TestFileLines(t *testing.T) {
