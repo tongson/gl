@@ -225,7 +225,10 @@ func TestFileLines(t *testing.T) {
 	if x[2] != "import (" {
 		t.Error("FileLines(gl.go) did not match")
 	}
-
+	y := FileLines("/etc/shadow")
+	if len(y) > 1 {
+		t.Error("FileLines() > 1; want 0")
+	}
         z := FileLines("_zzz_.go")
 	if len(z) > 1 {
 		t.Error("FileLines() > 1; want 0")
