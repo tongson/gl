@@ -256,7 +256,7 @@ func InsertStr(a []string, b string, i int) []string {
 	return a
 }
 
-// Prefix string `s` with pipes "|".
+// Prefix string `s` with pipes "│".
 // Used to "prettify" command line output.
 // Returns new string.
 func PipeStr(prefix string, str string) string {
