@@ -23,6 +23,21 @@ func TestRun(T *testing.T) {
 			t.Error("Run() wants `false`")
 		}
 	})
+	T.Run("gl.Run Timeout", func(t *testing.T) {
+		exe := RunArgs{
+                        Exe:     "/bin/sh",
+                        Args:    []string{"-c", "sleep 3"},
+                        Timeout: 1,
+                }
+		ret, res := exe.Run()
+		if ret {
+			t.Error("Run() wants `false`")
+		}
+		expected := "signal: killed"
+		if res.Error != expected {
+			t.Errorf("Run() wants `%s`; got `%s`", expected, res.Error)
+		}
+	})
 	T.Run("gl.Run Dir", func(t *testing.T) {
 		exe := RunArgs{Exe: "ls", Dir: "/etc"}
 		ret, out := exe.Run()
