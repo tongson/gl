@@ -29,9 +29,13 @@ func TestRun(T *testing.T) {
                         Args:    []string{"-c", "sleep 1"},
                         Timeout: 3,
                 }
-		ret, _ := exe.Run()
+		ret, res := exe.Run()
 		if ret {
 			t.Error("Run() wants `false`")
+		}
+		expected := "fork/exec /bin/sheesh: no such file or directory"
+		if res.Error != expected {
+			t.Errorf("Run() wants `%s`; got `%s`", expected, res.Error)
 		}
 	})
 	T.Run("gl.Run Timeout OK", func(t *testing.T) {
