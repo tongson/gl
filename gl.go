@@ -30,11 +30,6 @@ type RunOut struct {
 	Error  string
 }
 
-type panicT struct {
-	msg  string
-	code int
-}
-
 // Interface to execute the given `RunArgs` through `exec.Command`.
 // The first return value is a boolean, true indicates success, false otherwise.
 // Second value is the standard output of the command.
