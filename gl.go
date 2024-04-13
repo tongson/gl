@@ -51,8 +51,6 @@ func (a RunArgs) Run() (bool, RunOut) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	var errorStr string
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
 	var err error
 	if a.Timeout > 0 {
 		c := make(chan os.Signal, 1)
@@ -69,14 +67,10 @@ func (a RunArgs) Run() (bool, RunOut) {
 			errorStr = err.Error()
 		} else {
 			timer := time.AfterFunc(time.Duration(a.Timeout)*time.Second, func() {
-				err = cmd.Process.Kill()
-				if err != nil {
-					r = false
-					errorStr = err.Error()
-				} else {
-					r = true
-				}
+				_ = cmd.Process.Kill()
 			})
+			cmd.Stdout = &stdout
+			cmd.Stderr = &stderr
 			err = cmd.Wait()
 			signal.Stop(c)
 			if err != nil {
@@ -96,6 +90,8 @@ func (a RunArgs) Run() (bool, RunOut) {
 				errorStr = sig.String()
 			}
 		}()
+		cmd.Stdout = &stdout
+	        cmd.Stderr = &stderr
 		err = cmd.Run()
 		signal.Stop(c)
 		if err != nil {
