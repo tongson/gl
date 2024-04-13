@@ -91,7 +91,7 @@ func (a RunArgs) Run() (bool, RunOut) {
 			}
 		}()
 		cmd.Stdout = &stdout
-	        cmd.Stderr = &stderr
+		cmd.Stderr = &stderr
 		err = cmd.Run()
 		signal.Stop(c)
 		if err != nil {
