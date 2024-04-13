@@ -119,7 +119,11 @@ func TestRun(T *testing.T) {
 func TestIsFile(t *testing.T) {
 	b := IsFile("/etc/passwd")
 	if b != true {
-		t.Errorf("IsFile(\"\") = %t; want `true`", b)
+		t.Errorf("IsFile() = %t; want `true`", b)
+	}
+	c := IsFile("/etc/_zzz_")
+	if c != false {
+		t.Errorf("IsFile() =%t; want `false`", c)
 	}
 }
 
