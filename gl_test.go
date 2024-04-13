@@ -34,12 +34,12 @@ func TestRun(T *testing.T) {
 		}
 	})
 	T.Run("gl.Run Args", func(t *testing.T) {
-		args := []string {
+		args := []string{
 			"/etc",
 		}
 		exe := RunArgs{Exe: "ls", Args: args}
 		ret, out := exe.Run()
-	        if !ret {
+		if !ret {
 			t.Error("Run() wants `true`")
 		}
 		if !strings.Contains(out.Stdout, "passwd") {
@@ -117,6 +117,15 @@ func TestStatPathDir(t *testing.T) {
 	b := is_dir("/etc")
 	if b != true {
 		t.Errorf("StatPath(\"directory\") = %t; want `true`", b)
+	}
+}
+
+func TestPipeStr(t *testing.T) {
+	a := "prefix"
+	b := "this"
+	c := PipeStr(a, b)
+	if c != " prefix │\n prefix │ this\n prefix │" {
+		t.Error("Did not match expected output.")
 	}
 }
 
