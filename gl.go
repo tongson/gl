@@ -15,7 +15,7 @@ import (
 	"unicode"
 )
 
-type RunArgs struct {
+type RunArg struct {
 	Exe     string
 	Args    []string
 	Dir     string
@@ -30,12 +30,12 @@ type RunOut struct {
 	Error  string
 }
 
-// Interface to execute the given `RunArgs` through `exec.Command`.
+// Interface to execute the given `RunArg` through `exec.Command`.
 // The first return value is a boolean, true indicates success, false otherwise.
 // Second value is the standard output of the command.
 // Third value is the standard error of the command.
 // Fourth value is error string from Run.
-func (a RunArgs) Run() (bool, RunOut) {
+func (a RunArg) Run() (bool, RunOut) {
 	var r bool = false
 	/* #nosec G204 */
 	cmd := exec.Command(a.Exe, a.Args...)

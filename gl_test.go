@@ -10,21 +10,21 @@ import (
 func TestRun(T *testing.T) {
 	T.Parallel()
 	T.Run("gl.Run SimpleOk", func(t *testing.T) {
-		var exe RunArgs
-		exe = RunArgs{Exe: "true"}
+		var exe RunArg
+		exe = RunArg{Exe: "true"}
 		if ret, _ := exe.Run(); !ret {
 			t.Error("Run() wants `true`")
 		}
 	})
 	T.Run("gl.Run SimpleFail", func(t *testing.T) {
-		var exe RunArgs
-		exe = RunArgs{Exe: "false"}
+		var exe RunArg
+		exe = RunArg{Exe: "false"}
 		if ret, _ := exe.Run(); ret {
 			t.Error("Run() wants `false`")
 		}
 	})
 	T.Run("gl.Run Timeout Exe Fail", func(t *testing.T) {
-		exe := RunArgs{
+		exe := RunArg{
                         Exe:     "/bin/sheesh",
                         Args:    []string{"-c", "sleep 1"},
                         Timeout: 3,
@@ -39,7 +39,7 @@ func TestRun(T *testing.T) {
 		}
 	})
 	T.Run("gl.Run Timeout OK", func(t *testing.T) {
-		exe := RunArgs{
+		exe := RunArg{
                         Exe:     "/bin/sh",
                         Args:    []string{"-c", "sleep 1"},
                         Timeout: 3,
@@ -50,7 +50,7 @@ func TestRun(T *testing.T) {
 		}
 	})
 	T.Run("gl.Run Timeout Fail", func(t *testing.T) {
-		exe := RunArgs{
+		exe := RunArg{
                         Exe:     "/bin/sh",
                         Args:    []string{"-c", "sleep 3"},
                         Timeout: 1,
@@ -65,7 +65,7 @@ func TestRun(T *testing.T) {
 		}
 	})
 	T.Run("gl.Run Dir", func(t *testing.T) {
-		exe := RunArgs{Exe: "ls", Dir: "/etc"}
+		exe := RunArg{Exe: "ls", Dir: "/etc"}
 		ret, out := exe.Run()
 		if !ret {
 			t.Error("Run() wants `true`")
@@ -78,7 +78,7 @@ func TestRun(T *testing.T) {
 		args := []string{
 			"/etc",
 		}
-		exe := RunArgs{Exe: "ls", Args: args}
+		exe := RunArg{Exe: "ls", Args: args}
 		ret, out := exe.Run()
 		if !ret {
 			t.Error("Run() wants `true`")
@@ -88,12 +88,12 @@ func TestRun(T *testing.T) {
 		}
 	})
 	T.Run("gl.Run Stdin", func(t *testing.T) {
-		var exe RunArgs
+		var exe RunArg
 		input := "foo\n\nbar"
 		args := []string{
 			"-v",
 		}
-		exe = RunArgs{Exe: "cat", Args: args, Stdin: []byte(input)}
+		exe = RunArg{Exe: "cat", Args: args, Stdin: []byte(input)}
 		ret, out := exe.Run()
 		if ret != true {
 			t.Errorf("Run = %t; want `true`", ret)
@@ -110,11 +110,11 @@ func TestRun(T *testing.T) {
 	})
 	T.Run("gl.Run Env", func(t *testing.T) {
 		env := []string{"FOO=BAR"}
-		var exe RunArgs
+		var exe RunArg
 		args := []string{
 			"BEGIN{print ENVIRON[\"FOO\"]}",
 		}
-		exe = RunArgs{Exe: "awk", Args: args, Env: env}
+		exe = RunArg{Exe: "awk", Args: args, Env: env}
 		ret, out := exe.Run()
 		if ret != true {
 			t.Errorf("Run = %t; want `true`", ret)
