@@ -25,10 +25,10 @@ func TestRun(T *testing.T) {
 	})
 	T.Run("gl.Run Timeout Exe Fail", func(t *testing.T) {
 		exe := RunArg{
-                        Exe:     "/bin/sheesh",
-                        Args:    []string{"-c", "sleep 1"},
-                        Timeout: 3,
-                }
+			Exe:     "/bin/sheesh",
+			Args:    []string{"-c", "sleep 1"},
+			Timeout: 3,
+		}
 		ret, res := exe.Run()
 		if ret {
 			t.Error("Run() wants `false`")
@@ -40,10 +40,10 @@ func TestRun(T *testing.T) {
 	})
 	T.Run("gl.Run Timeout OK", func(t *testing.T) {
 		exe := RunArg{
-                        Exe:     "/bin/sh",
-                        Args:    []string{"-c", "sleep 1"},
-                        Timeout: 3,
-                }
+			Exe:     "/bin/sh",
+			Args:    []string{"-c", "sleep 1"},
+			Timeout: 3,
+		}
 		ret, _ := exe.Run()
 		if !ret {
 			t.Error("Run() wants `true`")
@@ -51,10 +51,10 @@ func TestRun(T *testing.T) {
 	})
 	T.Run("gl.Run Timeout Fail", func(t *testing.T) {
 		exe := RunArg{
-                        Exe:     "/bin/sh",
-                        Args:    []string{"-c", "sleep 3"},
-                        Timeout: 1,
-                }
+			Exe:     "/bin/sh",
+			Args:    []string{"-c", "sleep 3"},
+			Timeout: 1,
+		}
 		ret, res := exe.Run()
 		if ret {
 			t.Error("Run() wants `false`")
@@ -153,8 +153,8 @@ func TestIsDir(t *testing.T) {
 	}
 }
 
-func TestStatPath(T *testing.T){
-        T.Run("StatPath file", func(t *testing.T) {
+func TestStatPath(T *testing.T) {
+	T.Run("StatPath file", func(t *testing.T) {
 		is_file := StatPath("")
 		b := is_file("/etc/passwd")
 		if b != true {
@@ -165,7 +165,7 @@ func TestStatPath(T *testing.T){
 			t.Errorf("StatPath() =%t; want `false`", c)
 		}
 	})
-        T.Run("StatPath directory", func(t *testing.T) {
+	T.Run("StatPath directory", func(t *testing.T) {
 		is_dir := StatPath("directory")
 		b := is_dir("/etc")
 		if b != true {
@@ -182,7 +182,10 @@ func TestPipeStr(t *testing.T) {
 	a := "prefix"
 	b := "this"
 	c := PipeStr(a, b)
-	if c != " prefix │\n prefix │ this\n prefix │" {
+	expected := ` prefix │
+ prefix │ this
+ prefix │`
+	if c != expected {
 		t.Error("Did not match expected output.")
 	}
 }
@@ -244,7 +247,7 @@ func TestFileLines(t *testing.T) {
 	if len(y) > 1 {
 		t.Error("FileLines() > 1; want 0")
 	}
-        z := FileLines("_zzz_.go")
+	z := FileLines("_zzz_.go")
 	if len(z) > 1 {
 		t.Error("FileLines() > 1; want 0")
 	}
