@@ -62,7 +62,6 @@ func (a RunArg) Run() (bool, RunOut) {
 	}()
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
-
 	err = cmd.Start()
 	if err != nil {
 		r = false
