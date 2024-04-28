@@ -52,53 +52,38 @@ func (a RunArg) Run() (bool, RunOut) {
 	var stderr bytes.Buffer
 	var errorStr string
 	var err error
-	if a.Timeout > 0 {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, os.Interrupt)
-		go func() {
-			for sig := range c {
-				r = false
-				errorStr = sig.String()
-			}
-		}()
-		err = cmd.Start()
-		if err != nil {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		for sig := range c {
 			r = false
-			errorStr = err.Error()
-		} else {
-			timer := time.AfterFunc(time.Duration(a.Timeout)*time.Second, func() {
+			errorStr = sig.String()
+		}
+	}()
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err = cmd.Start()
+	if err != nil {
+		r = false
+		errorStr = err.Error()
+	} else {
+		var timer *time.Timer
+		if (a.Timeout != 0) && (a.Timeout > 0) {
+			timer = time.AfterFunc(time.Duration(a.Timeout)*time.Second, func() {
 				_ = cmd.Process.Kill()
 			})
-			cmd.Stdout = &stdout
-			cmd.Stderr = &stderr
-			err = cmd.Wait()
-			signal.Stop(c)
-			if err != nil {
-				r = false
-				errorStr = err.Error()
-			} else {
-				r = true
-			}
-			timer.Stop()
 		}
-	} else {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, os.Interrupt)
-		go func() {
-			for sig := range c {
-				r = false
-				errorStr = sig.String()
-			}
-		}()
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
-		err = cmd.Run()
+		err = cmd.Wait()
 		signal.Stop(c)
 		if err != nil {
 			r = false
 			errorStr = err.Error()
 		} else {
 			r = true
+		}
+		if (a.Timeout != 0) && (a.Timeout > 0) {
+			timer.Stop()
 		}
 	}
 	return r, RunOut{Stdout: stdout.String(), Stderr: stderr.String(), Error: errorStr}
