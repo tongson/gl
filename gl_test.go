@@ -87,6 +87,41 @@ func TestRun(T *testing.T) {
 			t.Error("Run() output must contain string")
 		}
 	})
+	T.Run("gl.Run Stdout", func(t *testing.T) {
+		var sh strings.Builder
+		sf := func(o string) {
+			sh.WriteString(o)
+		}
+		args := []string{
+			"/etc",
+		}
+		exe := RunArg{Exe: "ls", Args: args, Stdout: sf}
+		ret, _ := exe.Run()
+		if !ret {
+			t.Error("Run() wants `true`")
+		}
+		if !strings.Contains(sh.String(), "passwd") {
+			t.Error("Run() output must contain string")
+		}
+	})
+	T.Run("gl.Run Stderr", func(t *testing.T) {
+		var sh strings.Builder
+		sf := func(o string) {
+			sh.WriteString(o)
+		}
+		args := []string{
+			"foo", "/etc/shadow",
+		}
+		exe := RunArg{Exe: "grep", Args: args, Stderr: sf}
+		ret, _ := exe.Run()
+		if ret {
+			t.Error("Run() wants `false`")
+		}
+		if !strings.Contains(sh.String(), "Permission denied") {
+			t.Error("Run() output must contain string")
+		}
+	})
+
 	T.Run("gl.Run Stdin", func(t *testing.T) {
 		var exe RunArg
 		input := "foo\n\nbar"
@@ -99,13 +134,13 @@ func TestRun(T *testing.T) {
 			t.Errorf("Run = %t; want `true`", ret)
 		}
 		if out.Stdout != "foo\n\nbar" {
-			t.Errorf("Run = %s; want 'foo\n\nbar'", out.Stdout)
+			t.Errorf("Run = `%s`; want 'foo\n\nbar'", out.Stdout)
 		}
 		if out.Stderr != "" {
-			t.Errorf("Run = %s; want ''", out.Stderr)
+			t.Errorf("Run = `%s`; want ''", out.Stderr)
 		}
 		if out.Error != "" {
-			t.Errorf("Run = %s; want ''", out.Error)
+			t.Errorf("Run = `%s`; want ''", out.Error)
 		}
 	})
 	T.Run("gl.Run Env", func(t *testing.T) {
