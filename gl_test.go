@@ -213,16 +213,36 @@ func TestStatPath(T *testing.T) {
 	})
 }
 
-func TestPipeStr(t *testing.T) {
-	a := "prefix"
-	b := "this"
-	c := PipeStr(a, b)
-	expected := ` prefix │
- prefix │ this
- prefix │`
-	if c != expected {
-		t.Error("Did not match expected output.")
-	}
+func TestPipeStr(T *testing.T) {
+	T.Parallel()
+	T.Run("PipeStr", func(t *testing.T) {
+		a := "prefix"
+		b := "this"
+		c := PipeStr(a, b)
+		expected := ` prefix │ this`
+		if c != expected {
+			t.Errorf("Got = `%s`; Did not match expected output: %s", c, expected)
+		}
+	})
+	T.Run("PipeStr Empty", func(t *testing.T) {
+		a := "prefix"
+		b := ""
+		c := PipeStr(a, b)
+		expected := ` prefix │ `
+		if c != expected {
+			t.Errorf("Got = `%s`; Did not match expected output: %s", c, expected)
+		}
+	})
+	T.Run("PipeStr Newline", func(t *testing.T) {
+		a := "prefix"
+		b := "one\n\ntwo"
+		c := PipeStr(a, b)
+		expected := ` prefix │ one` + "\n" + ` prefix │ ` + "\n" + ` prefix │ two`
+		if c != expected {
+			t.Errorf("Got = `%s`; Did not match expected output: %s", c, expected)
+		}
+	})
+
 }
 
 func TestInsertStr(t *testing.T) {
