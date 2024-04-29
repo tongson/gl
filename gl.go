@@ -15,6 +15,8 @@ import (
 	"unicode"
 )
 
+type RunPrinter func(string)
+
 type RunArg struct {
 	Exe     string
 	Args    []string
@@ -22,6 +24,8 @@ type RunArg struct {
 	Env     []string
 	Stdin   []byte
 	Timeout int
+	Stdout  RunPrinter
+	Stderr  RunPrinter
 }
 
 type RunOut struct {
@@ -48,20 +52,70 @@ func (a RunArg) Run() (bool, RunOut) {
 	if a.Stdin != nil || len(a.Stdin) > 0 {
 		cmd.Stdin = bytes.NewBuffer(a.Stdin)
 	}
-	var stdout bytes.Buffer
-	var stderr bytes.Buffer
 	var errorStr string
 	var err error
+	var stdout string
+	var stderr string
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
+	done := make(chan struct{})
 	go func() {
 		for sig := range c {
 			r = false
 			errorStr = sig.String()
+			break
 		}
+		done <- struct{}{}
 	}()
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	soPipe, soErr := cmd.StdoutPipe()
+	if soErr != nil {
+		return false, RunOut{Stdout: "", Stderr: "", Error: soErr.Error()}
+	}
+	sePipe, seErr := cmd.StderrPipe()
+	if seErr != nil {
+		return false, RunOut{Stdout: "", Stderr: "", Error: soErr.Error()}
+	}
+	var soStr strings.Builder
+	var seStr strings.Builder
+	soBuf := bufio.NewReader(soPipe)
+	seBuf := bufio.NewReader(sePipe)
+	go func() {
+		soLast := false
+		seLast := false
+		for {
+			line, err := soBuf.ReadString('\n')
+			if err == io.EOF {
+				soLast = true
+			} else if err != nil {
+				continue
+			}
+			if a.Stdout == nil {
+				soStr.WriteString(line)
+			} else {
+				a.Stdout(line)
+			}
+			if soLast {
+				break
+			}
+		}
+		for {
+			line, err := seBuf.ReadString('\n')
+			if err == io.EOF {
+				seLast = true
+			} else if err != nil {
+				continue
+			}
+			if a.Stderr == nil {
+				seStr.WriteString(line)
+			} else {
+				a.Stderr(line)
+			}
+			if seLast {
+				break
+			}
+		}
+		done <- struct{}{}
+	}()
 	err = cmd.Start()
 	if err != nil {
 		r = false
@@ -73,8 +127,10 @@ func (a RunArg) Run() (bool, RunOut) {
 				_ = cmd.Process.Kill()
 			})
 		}
+		<-done
 		err = cmd.Wait()
-		signal.Stop(c)
+		stdout = soStr.String()
+		stderr = seStr.String()
 		if err != nil {
 			r = false
 			errorStr = err.Error()
@@ -85,7 +141,8 @@ func (a RunArg) Run() (bool, RunOut) {
 			timer.Stop()
 		}
 	}
-	return r, RunOut{Stdout: stdout.String(), Stderr: stderr.String(), Error: errorStr}
+	signal.Stop(c)
+	return r, RunOut{Stdout: stdout, Stderr: stderr, Error: errorStr}
 }
 
 func IsFile(p string) bool {
