@@ -292,7 +292,7 @@ func InsertStr(a []string, b string, i int) []string {
 func PipeStr(prefix string, str string) string {
 	replacement := fmt.Sprintf("\n %s │ ", prefix)
 	str = strings.Replace(str, "\n", replacement, -1)
-	return fmt.Sprintf(" %s │ %s", prefix, str)
+	return fmt.Sprintf(" %s │\n %s │ %s\n %s │", prefix, prefix, str, prefix)
 }
 
 // Writes the string `s` to the file `path`.
