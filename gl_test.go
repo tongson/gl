@@ -219,7 +219,7 @@ func TestPipeStr(T *testing.T) {
 		a := "prefix"
 		b := "this"
 		c := PipeStr(a, b)
-		expected := ` prefix │ this`
+		expected := " prefix │\n" + " prefix │ this\n" + " prefix │"
 		if c != expected {
 			t.Errorf("Got = `%s`; Did not match expected output: %s", c, expected)
 		}
@@ -228,7 +228,7 @@ func TestPipeStr(T *testing.T) {
 		a := "prefix"
 		b := ""
 		c := PipeStr(a, b)
-		expected := ` prefix │ `
+		expected := " prefix │\n" + " prefix │ \n" + " prefix │"
 		if c != expected {
 			t.Errorf("Got = `%s`; Did not match expected output: %s", c, expected)
 		}
@@ -237,12 +237,11 @@ func TestPipeStr(T *testing.T) {
 		a := "prefix"
 		b := "one\n\ntwo"
 		c := PipeStr(a, b)
-		expected := ` prefix │ one` + "\n" + ` prefix │ ` + "\n" + ` prefix │ two`
+		expected := " prefix │\n" + " prefix │ one\n" + " prefix │ \n" + " prefix │ two\n" + " prefix │"
 		if c != expected {
 			t.Errorf("Got = `%s`; Did not match expected output: %s", c, expected)
 		}
 	})
-
 }
 
 func TestInsertStr(t *testing.T) {
