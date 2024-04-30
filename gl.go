@@ -86,8 +86,6 @@ func (a RunArg) Run() (bool, RunOut) {
 			line, err := soBuf.ReadString('\n')
 			if err == io.EOF {
 				soLast = true
-			} else if err != nil {
-				continue
 			}
 			soStr.WriteString(line)
 			if a.Stdout != nil {
@@ -96,13 +94,14 @@ func (a RunArg) Run() (bool, RunOut) {
 			if soLast {
 				break
 			}
+			if err != nil {
+				continue
+			}
 		}
 		for {
 			line, err := seBuf.ReadString('\n')
 			if err == io.EOF {
 				seLast = true
-			} else if err != nil {
-				continue
 			}
 			seStr.WriteString(line)
 			if a.Stderr != nil {
@@ -110,6 +109,9 @@ func (a RunArg) Run() (bool, RunOut) {
 			}
 			if seLast {
 				break
+			}
+			if err != nil {
+				continue
 			}
 		}
 		done <- struct{}{}
