@@ -89,9 +89,8 @@ func (a RunArg) Run() (bool, RunOut) {
 			} else if err != nil {
 				continue
 			}
-			if a.Stdout == nil {
-				soStr.WriteString(line)
-			} else {
+			soStr.WriteString(line)
+			if a.Stdout != nil {
 				a.Stdout(line)
 			}
 			if soLast {
@@ -105,9 +104,8 @@ func (a RunArg) Run() (bool, RunOut) {
 			} else if err != nil {
 				continue
 			}
-			if a.Stderr == nil {
-				seStr.WriteString(line)
-			} else {
+			seStr.WriteString(line)
+			if a.Stderr != nil {
 				a.Stderr(line)
 			}
 			if seLast {
