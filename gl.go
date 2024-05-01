@@ -8,7 +8,6 @@ import (
 	"io/fs"
 	"os"
 	"os/exec"
-	"os/signal"
 	"path/filepath"
 	"strings"
 	"time"
@@ -56,17 +55,7 @@ func (a RunArg) Run() (bool, RunOut) {
 	var err error
 	var stdout string
 	var stderr string
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
 	done := make(chan struct{})
-	go func() {
-		for sig := range c {
-			r = false
-			errorStr = sig.String()
-			break
-		}
-		done <- struct{}{}
-	}()
 	soPipe, soErr := cmd.StdoutPipe()
 	if soErr != nil {
 		return false, RunOut{Stdout: "", Stderr: "", Error: soErr.Error()}
@@ -141,7 +130,6 @@ func (a RunArg) Run() (bool, RunOut) {
 			timer.Stop()
 		}
 	}
-	signal.Stop(c)
 	return r, RunOut{Stdout: stdout, Stderr: stderr, Error: errorStr}
 }
 
