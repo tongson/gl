@@ -39,7 +39,7 @@ type RunOut struct {
 // Third value is the standard error of the command.
 // Fourth value is error string from Run.
 func (a RunArg) Run() (bool, RunOut) {
-	var r bool = false
+	var r bool
 	/* #nosec G204 */
 	cmd := exec.Command(a.Exe, a.Args...)
 	if a.Dir != "" {
