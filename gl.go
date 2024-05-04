@@ -189,10 +189,10 @@ func PathWalker(sh *strings.Builder) func(string, fs.DirEntry, error) error {
 			var file *os.File
 			var str []byte
 			file, oerr := os.Open(path)
-			defer file.Close()
 			if err != nil {
 				return oerr
 			}
+			defer file.Close()
 			str, rerr := io.ReadAll(file)
 			if err != nil {
 				return rerr
@@ -214,10 +214,10 @@ func FileRead(path string) string {
 		var file *os.File
 		var str []byte
 		file, oerr := os.Open(path)
-		defer file.Close()
 		if oerr != nil {
 			return ""
 		}
+		defer file.Close()
 		str, rerr := io.ReadAll(file)
 		if rerr != nil {
 			return ""
@@ -240,10 +240,10 @@ func FileLines(path string) []string {
 	if isFile(path) {
 		var file *os.File
 		file, err := os.Open(path)
-		defer file.Close()
 		if err != nil {
 			return text
 		}
+		defer file.Close()
 		scanner := bufio.NewScanner(file)
 		scanner.Split(bufio.ScanLines)
 		for scanner.Scan() {
@@ -289,10 +289,10 @@ func PipeStr(prefix string, str string) string {
 // It returns any error encountered, nil otherwise.
 func StringToFile(path string, s string) error {
 	fo, err := os.Create(path)
-	defer fo.Close()
 	if err != nil {
 		return err
 	}
+	defer fo.Close()
 	_, err = io.Copy(fo, strings.NewReader(s))
 	if err != nil {
 		return err
