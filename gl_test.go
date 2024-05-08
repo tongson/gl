@@ -121,7 +121,6 @@ func TestRun(T *testing.T) {
 			t.Error("Run() output must contain string")
 		}
 	})
-
 	T.Run("gl.Run Stdin", func(t *testing.T) {
 		var exe RunArg
 		input := "foo\n\nbar"
@@ -162,6 +161,37 @@ func TestRun(T *testing.T) {
 		}
 		if out.Error != "" {
 			t.Errorf("Run = %s; want ''", out.Error)
+		}
+	})
+	T.Run("gl.Run Stdout integrity", func(t *testing.T) {
+		var exe RunArg
+		exe = RunArg{Exe: "cat", Args: []string{"utf8.txt"}}
+		ret, out := exe.Run()
+		if !ret {
+			t.Error("Run() wants `true`")
+		}
+		in := out.Stdout
+		sha := RunArg{Exe: "sha256sum", Stdin: []byte(in)}
+		_, hash := sha.Run()
+		if hash.Stdout != "69a26f4dcd4980e2cc60cc622cbfa64924c48337ec1f34931992166392f94dea  -\n" {
+			t.Errorf("Hash did not match. Got: %s", hash.Stdout)
+		}
+	})
+	T.Run("gl.Run Stdout stream integrity", func(t *testing.T) {
+		var soStr strings.Builder
+		soFn := func(s string) {
+			_, _ = soStr.WriteString(s)
+		}
+		var exe RunArg
+		exe = RunArg{Exe: "cat", Args: []string{"utf8.txt"}, Stdout: soFn}
+		ret, _ := exe.Run()
+		if !ret {
+			t.Error("Run() wants `true`")
+		}
+		sha := RunArg{Exe: "sha256sum", Stdin: []byte(soStr.String())}
+		_, hash := sha.Run()
+		if hash.Stdout != "69a26f4dcd4980e2cc60cc622cbfa64924c48337ec1f34931992166392f94dea  -\n" {
+			t.Errorf("Hash did not match. Got: %s", hash.Stdout)
 		}
 	})
 }
