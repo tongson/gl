@@ -52,14 +52,14 @@ func TestRun(T *testing.T) {
 	T.Run("gl.Run Timeout Fail", func(t *testing.T) {
 		exe := RunArg{
 			Exe:     "/bin/sh",
-			Args:    []string{"-c", "sleep 3"},
+			Args:    []string{"-c", "sleep 1000"},
 			Timeout: 1,
 		}
 		ret, res := exe.Run()
 		if ret {
 			t.Error("Run() wants `false`")
 		}
-		expected := "signal: killed"
+		expected := "signal: terminated"
 		if res.Error != expected {
 			t.Errorf("Run() wants `%s`; got `%s`", expected, res.Error)
 		}
