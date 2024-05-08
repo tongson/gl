@@ -153,42 +153,15 @@ func IsDir(p string) bool {
 	return false
 }
 
-// Returns a function for simple directory or file check.
-// StatPath("directory") for directories.
-// StatPath() or StatPath("whatever") for files.
-// The function returns boolean `true` on successfully check, `false` otherwise.
-func StatPath(f string) func(string) bool {
-	switch f {
-	case "directory":
-		return func(i string) bool {
-			if fi, err := os.Stat(i); err == nil {
-				if fi.IsDir() {
-					return true
-				}
-			}
-			return false
-		}
-	default:
-		return func(i string) bool {
-			info, err := os.Stat(i)
-			if os.IsNotExist(err) {
-				return false
-			}
-			return !info.IsDir()
-		}
-	}
-}
-
 // Returns a function for walking a path for files.
 // Files are read and then contents are written to a strings.Builder pointer.
 func PathWalker(sh *strings.Builder) func(string, fs.DirEntry, error) error {
-	isFile := StatPath("file")
 	return func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() {
 			return nil
 		}
 		/* #nosec G304 */
-		if isFile(path) {
+		if IsFile(path) {
 			var file *os.File
 			var str []byte
 			file, oerr := os.Open(path)
@@ -211,9 +184,8 @@ func PathWalker(sh *strings.Builder) func(string, fs.DirEntry, error) error {
 // Always returns a string value.
 // An empty string "" is returned for errors or nonexistent/unreadable files.
 func FileRead(path string) string {
-	isFile := StatPath("file")
 	/* #nosec G304 */
-	if isFile(path) {
+	if IsFile(path) {
 		var file *os.File
 		var str []byte
 		file, oerr := os.Open(path)
@@ -238,9 +210,8 @@ func FileRead(path string) string {
 
 func FileLines(path string) []string {
 	var text []string
-	isFile := StatPath("file")
 	/* #nosec G304 */
-	if isFile(path) {
+	if IsFile(path) {
 		var file *os.File
 		file, err := os.Open(path)
 		if err != nil {
