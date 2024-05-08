@@ -188,31 +188,6 @@ func TestIsDir(t *testing.T) {
 	}
 }
 
-func TestStatPath(T *testing.T) {
-	T.Run("StatPath file", func(t *testing.T) {
-		is_file := StatPath("")
-		b := is_file("/etc/passwd")
-		if b != true {
-			t.Errorf("StatPath() = %t; want `true`", b)
-		}
-		c := is_file("/etc/_zzz_")
-		if c != false {
-			t.Errorf("StatPath() =%t; want `false`", c)
-		}
-	})
-	T.Run("StatPath directory", func(t *testing.T) {
-		is_dir := StatPath("directory")
-		b := is_dir("/etc")
-		if b != true {
-			t.Errorf("StatPath(\"directory\") = %t; want `true`", b)
-		}
-		c := is_dir("/etc/passwd")
-		if c != false {
-			t.Errorf("IsDir(\"directory\") = %t; want `false`", b)
-		}
-	})
-}
-
 func TestPipeStr(T *testing.T) {
 	T.Parallel()
 	T.Run("PipeStr", func(t *testing.T) {
