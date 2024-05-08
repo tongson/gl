@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 	"unicode"
 )
@@ -42,6 +43,7 @@ func (a RunArg) Run() (bool, RunOut) {
 	var r bool
 	/* #nosec G204 */
 	cmd := exec.Command(a.Exe, a.Args...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	if a.Dir != "" {
 		cmd.Dir = a.Dir
 	}
@@ -113,7 +115,8 @@ func (a RunArg) Run() (bool, RunOut) {
 		var timer *time.Timer
 		if (a.Timeout != 0) && (a.Timeout > 0) {
 			timer = time.AfterFunc(time.Duration(a.Timeout)*time.Second, func() {
-				_ = cmd.Process.Kill()
+				pid := cmd.Process.Pid
+				_ = syscall.Kill(-pid, syscall.SIGTERM)
 			})
 		}
 		<-done
