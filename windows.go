@@ -2,9 +2,12 @@
 
 package gl
 
-func setPgid() bool {
-	// noop
-	return nil
+import (
+	"syscall"
+)
+
+func setPgid() *syscall.SysProcAttr {
+	return &syscall.SysProcAttr{}
 }
 
 func sKill(pid int) {
