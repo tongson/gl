@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
@@ -43,7 +44,12 @@ func (a RunArg) Run() (bool, RunOut) {
 	var r bool
 	/* #nosec G204 */
 	cmd := exec.Command(a.Exe, a.Args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	switch runtime.GOOS {
+	case "windows":
+		// NA
+	default:
+		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	}
 	if a.Dir != "" {
 		cmd.Dir = a.Dir
 	}
@@ -116,7 +122,12 @@ func (a RunArg) Run() (bool, RunOut) {
 		if (a.Timeout != 0) && (a.Timeout > 0) {
 			timer = time.AfterFunc(time.Duration(a.Timeout)*time.Second, func() {
 				pid := cmd.Process.Pid
-				_ = syscall.Kill(-pid, syscall.SIGTERM)
+				switch runtime.GOOS {
+				case "windows":
+					_ = cmd.Process.Kill()
+				default:
+					_ = syscall.Kill(-pid, syscall.SIGTERM)
+				}
 			})
 		}
 		<-done
