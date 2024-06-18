@@ -282,6 +282,10 @@ func TestFileRead(t *testing.T) {
 	if z != "" {
 		t.Error("want ''")
 	}
+	e := FileRead("/dev/null")
+	if e != "" {
+		t.Error("want ''")
+	}
 }
 
 func TestFileLines(t *testing.T) {
@@ -317,6 +321,10 @@ func TestFileGlob(t *testing.T) {
 	if x[0] != ".git" {
 		t.Error("FileGlob(./*) did not match")
 	}
+	y, _ := FileGlob(".git/*")
+	if y[0] != ".git/COMMIT_EDITMSG" {
+		t.Error("FileGlob(.git/*) did not match")
+	}
 }
 
 func TestPathWalk(t *testing.T) {
@@ -328,6 +336,10 @@ func TestPathWalk(t *testing.T) {
 		t.Error(err.Error())
 	}
 	err = filepath.WalkDir("/etc", fnwalk)
+	if err == nil {
+		t.Error("Expected an error here.")
+	}
+	err = filepath.WalkDir("/dev", fnwalk)
 	if err == nil {
 		t.Error("Expected an error here.")
 	}
