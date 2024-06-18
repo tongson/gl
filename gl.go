@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"syscall"
 	"time"
 	"unicode"
 )
@@ -48,7 +47,7 @@ func (a RunArg) Run() (bool, RunOut) {
 	case "windows":
 		// NA
 	default:
-		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+		cmd.SysProcAttr = setPgid()
 	}
 	if a.Dir != "" {
 		cmd.Dir = a.Dir
@@ -126,7 +125,7 @@ func (a RunArg) Run() (bool, RunOut) {
 				case "windows":
 					_ = cmd.Process.Kill()
 				default:
-					_ = syscall.Kill(-pid, syscall.SIGTERM)
+					sKill(pid)
 				}
 			})
 		}
