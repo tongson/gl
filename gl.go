@@ -43,12 +43,7 @@ func (a RunArg) Run() (bool, RunOut) {
 	var r bool
 	/* #nosec G204 */
 	cmd := exec.Command(a.Exe, a.Args...)
-	switch runtime.GOOS {
-	case "windows":
-		// NA
-	default:
-		cmd.SysProcAttr = setPgid()
-	}
+	cmd.SysProcAttr = setPgid()
 	if a.Dir != "" {
 		cmd.Dir = a.Dir
 	}
