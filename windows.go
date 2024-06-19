@@ -7,9 +7,10 @@ import (
 )
 
 func setPgid() *syscall.SysProcAttr {
+	// noop
 	return &syscall.SysProcAttr{}
 }
 
-func sKill(pid int) {
+func killPgid(pid int) {
 	// noop
 }

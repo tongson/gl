@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 	"unicode"
@@ -115,13 +114,8 @@ func (a RunArg) Run() (bool, RunOut) {
 		var timer *time.Timer
 		if (a.Timeout != 0) && (a.Timeout > 0) {
 			timer = time.AfterFunc(time.Duration(a.Timeout)*time.Second, func() {
-				pid := cmd.Process.Pid
-				switch runtime.GOOS {
-				case "windows":
-					_ = cmd.Process.Kill()
-				default:
-					sKill(pid)
-				}
+				killPgid(cmd.Process.Pid)
+				_ = cmd.Process.Kill()
 			})
 		}
 		<-done
