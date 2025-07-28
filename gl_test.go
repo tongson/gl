@@ -347,3 +347,22 @@ func TestPathWalk(t *testing.T) {
 		t.Error("PathWalker() = ''; want 'strings'")
 	}
 }
+
+func TestCapture(T *testing.T) {
+	T.Run("Capture", func(t *testing.T) {
+		f := `
+		something here
+# BEGIN
+one
+two
+three
+# END
+		another here
+		`
+		c, _ := Capture(f, "# BEGIN", "# END")
+		expected := "# BEGIN\none\ntwo\nthree\n# END"
+		if c != expected {
+			t.Errorf("Got = `%s`; Did not match expected output: %s", c, expected)
+		}
+	})
+}
