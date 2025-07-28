@@ -253,9 +253,19 @@ func InsertStr(a []string, b string, i int) []string {
 // Used to "prettify" command line output.
 // Returns new string.
 func PipeStr(prefix string, str string) string {
+	eos := ""
+	if str != "" {
+		eos = str[len(str)-1:]
+	}
 	replacement := fmt.Sprintf("\n %s │ ", prefix)
 	str = strings.Replace(str, "\n", replacement, -1)
-	return fmt.Sprintf(" %s │\n %s │ %s\n %s │", prefix, prefix, str, prefix)
+	var r string
+	if eos == "\n" {
+		r = fmt.Sprintf(" %s │\n %s │ %s\n", prefix, prefix, str)
+	} else {
+		r = fmt.Sprintf(" %s │\n %s │ %s\n %s │ \n", prefix, prefix, str, prefix)
+	}
+	return r
 }
 
 // Writes the string `s` to the file `path`.
