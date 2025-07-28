@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-# FROM Go Playground
+// FROM Go Playground
 
 type skipTillReader struct {
 	rdr   *bufio.Reader
