@@ -207,6 +207,17 @@ func TestIsFile(t *testing.T) {
 	}
 }
 
+func TestRootIsFile(t *testing.T) {
+	b := RootIsFile("/etc", "passwd")
+	if b != true {
+		t.Errorf("RootIsFile() = %t; want `true`", b)
+	}
+	c := RootIsFile("/etc", "_zzz_")
+	if c != false {
+		t.Errorf("RootIsFile() =%t; want `false`", c)
+	}
+}
+
 func TestIsDir(t *testing.T) {
 	b := IsDir("/etc")
 	if b != true {
@@ -215,6 +226,17 @@ func TestIsDir(t *testing.T) {
 	c := IsDir("/etc/passwd")
 	if c != false {
 		t.Errorf("IsDir(\"directory\") = %t; want `false`", b)
+	}
+}
+
+func TestRootIsDir(t *testing.T) {
+	b := RootIsDir("/", "etc")
+	if b != true {
+		t.Errorf("RootIsDir(\"directory\") = %t; want `true`", b)
+	}
+	c := RootIsDir("/etc", "passwd")
+	if c != false {
+		t.Errorf("RootIsDir(\"directory\") = %t; want `false`", b)
 	}
 }
 
@@ -269,6 +291,17 @@ func TestStringToFile(t *testing.T) {
 	}
 }
 
+func TestRootStringToFile(t *testing.T) {
+	e := RootStringToFile("/", "dev/null", "foo")
+	if e != nil {
+		t.Errorf("RootStringToFile() = %s; want 'nil'", e.Error())
+	}
+	f := RootStringToFile("/", "dev/nil", "foo")
+	if f == nil {
+		t.Errorf("RootStringToFile() = %s; want 'error'", f.Error())
+	}
+}
+
 func TestFileRead(t *testing.T) {
 	s := FileRead("/etc/passwd")
 	if s == "" {
@@ -283,6 +316,25 @@ func TestFileRead(t *testing.T) {
 		t.Error("want ''")
 	}
 	e := FileRead("/dev/null")
+	if e != "" {
+		t.Error("want ''")
+	}
+}
+
+func TestRootFileRead(t *testing.T) {
+	s := RootFileRead("/etc", "passwd")
+	if s == "" {
+		t.Error("RootFileRead() = ''; want 'strings'")
+	}
+	x := RootFileRead("/etc", "sdfsdf")
+	if x != "" {
+		t.Error("want ''")
+	}
+	z := RootFileRead("/etc", "shadow")
+	if z != "" {
+		t.Error("want ''")
+	}
+	e := RootFileRead("/dev", "null")
 	if e != "" {
 		t.Error("want ''")
 	}
@@ -313,6 +365,34 @@ func TestFileLines(t *testing.T) {
 	z := FileLines("_zzz_.go")
 	if len(z) > 1 {
 		t.Error("FileLines() > 1; want 0")
+	}
+}
+
+func TestRootFileLines(t *testing.T) {
+	s := RootFileLines(".", "gl.go")
+	if s == nil {
+		t.Error("RootFileLines() = nil; want '[]string'")
+	}
+	x := RootFileLines(".", "gl.go")
+	if len(x) < 0 {
+		t.Error("RootFileLines() len = 0; want > 0")
+	}
+	if x[0] != "package gl" {
+		t.Error("RootFileLines(. gl.go) did not match")
+	}
+	if x[1] != "" {
+		t.Error("RootFileLines(. gl.go) did not match")
+	}
+	if x[2] != "import (" {
+		t.Error("RootFileLines(. gl.go) did not match")
+	}
+	y := RootFileLines("/etc", "shadow")
+	if len(y) > 1 {
+		t.Error("RootFileLines() > 1; want 0")
+	}
+	z := RootFileLines(".", "_zzz_.go")
+	if len(z) > 1 {
+		t.Error("RootFileLines() > 1; want 0")
 	}
 }
 

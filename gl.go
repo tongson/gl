@@ -143,9 +143,36 @@ func IsFile(p string) bool {
 	return !info.IsDir()
 }
 
+func RootIsFile(r string, p string) bool {
+	root, rerr := os.OpenRoot(r)
+	if rerr != nil {
+		return false
+	}
+	defer root.Close()
+	info, ierr := root.Stat(p)
+	if os.IsNotExist(ierr) {
+		return false
+	}
+	return !info.IsDir()
+}
+
 func IsDir(p string) bool {
 	if fi, err := os.Stat(p); err == nil {
 		if fi.IsDir() {
+			return true
+		}
+	}
+	return false
+}
+
+func RootIsDir(r string, p string) bool {
+	root, rerr := os.OpenRoot(r)
+	if rerr != nil {
+		return false
+	}
+	defer root.Close()
+	if di, derr := root.Stat(p); derr == nil {
+		if di.IsDir() {
 			return true
 		}
 	}
@@ -207,12 +234,69 @@ func FileRead(path string) string {
 	}
 }
 
+func RootFileRead(r string, path string) string {
+	/* #nosec G304 */
+	if RootIsFile(r, path) {
+		root, rerr := os.OpenRoot(r)
+		if rerr != nil {
+			return ""
+		}
+		defer root.Close()
+		var file *os.File
+		var str []byte
+		file, oerr := root.Open(path)
+		if oerr != nil {
+			return ""
+		}
+		defer file.Close()
+		str, aerr := io.ReadAll(file)
+		if aerr != nil {
+			return ""
+		}
+		_ = file.Close()
+		if len(str) > 0 {
+			return string(str)
+		} else {
+			return ""
+		}
+	} else {
+		return ""
+	}
+}
+
 func FileLines(path string) []string {
 	var text []string
 	/* #nosec G304 */
 	if IsFile(path) {
 		var file *os.File
 		file, err := os.Open(path)
+		if err != nil {
+			return text
+		}
+		defer file.Close()
+		scanner := bufio.NewScanner(file)
+		scanner.Split(bufio.ScanLines)
+		for scanner.Scan() {
+			text = append(text, scanner.Text())
+		}
+		_ = file.Close()
+		return text
+	} else {
+		return text
+	}
+}
+
+func RootFileLines(r string, path string) []string {
+	var text []string
+	/* #nosec G304 */
+	if RootIsFile(r, path) {
+		root, rerr := os.OpenRoot(r)
+		if rerr != nil {
+			return text
+		}
+		defer root.Close()
+		var file *os.File
+		file, err := root.Open(path)
 		if err != nil {
 			return text
 		}
@@ -272,6 +356,24 @@ func PipeStr(prefix string, str string) string {
 // It returns any error encountered, nil otherwise.
 func StringToFile(path string, s string) error {
 	fo, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer fo.Close()
+	_, err = io.Copy(fo, strings.NewReader(s))
+	if err != nil {
+		return err
+	}
+	return fo.Close()
+}
+
+func RootStringToFile(r string, path string, s string) error {
+	root, rerr := os.OpenRoot(r)
+	if rerr != nil {
+		return rerr
+	}
+	defer root.Close()
+	fo, err := root.Create(path)
 	if err != nil {
 		return err
 	}
